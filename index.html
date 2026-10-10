@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Vedic | Agency CRM</title>
+<style>
+:root{--navy:#14213d;--blue:#2563eb;--cyan:#06b6d4;--bg:#f3f6fb;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--white:#fff;--green:#15803d;--red:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{background:linear-gradient(120deg,#111c37,#174ea6);color:white;padding:22px max(18px,calc((100% - 1200px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{font-size:21px;font-weight:800;letter-spacing:.2px}.tagline{font-size:12px;opacity:.8;margin-top:3px}.status{font-size:12px;background:#ffffff20;border:1px solid #ffffff45;padding:7px 10px;border-radius:20px}
+main{max-width:1200px;margin:24px auto;padding:0 18px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab{border:1px solid var(--line);background:#fff;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:650;color:#334155}.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.metric,.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 5px 18px #14213d08}.metric small{color:var(--muted)}.metric strong{display:block;font-size:28px;margin-top:5px}.layout{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.5fr);gap:18px}.panel h2{font-size:17px;margin:0 0 14px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:700;color:#475569}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink);font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb18}textarea{resize:vertical;min-height:75px}.btn{border:0;border-radius:9px;padding:11px 15px;background:var(--blue);color:#fff;font-weight:750;cursor:pointer}.btn.secondary{background:#eaf0ff;color:#1d4ed8}.btn:disabled{opacity:.55;cursor:wait}.form-actions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar input,.toolbar select{max-width:220px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:700px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:11px 9px;font-size:13px;vertical-align:top}th{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.5px;background:#f8fafc}.pill{display:inline-block;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:750;background:#e2e8f0;color:#334155}.pill.New{background:#dbeafe;color:#1d4ed8}.pill.Qualified{background:#fef3c7;color:#92400e}.pill.Won{background:#dcfce7;color:#166534}.pill.Lost{background:#fee2e2;color:#991b1b}.muted{color:var(--muted)}.notice{margin:0 0 15px;padding:11px 13px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:13px}.message{margin-top:12px;font-size:13px}.message.error{color:var(--red)}.message.ok{color:var(--green)}.reportgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.reportbox{padding:14px;background:#f8fafc;border-radius:10px}.reportbox strong{display:block;font-size:23px}.hidden{display:none!important}.empty{text-align:center;padding:26px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.reportgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.metrics{gap:8px}.metric{padding:13px}.metric strong{font-size:23px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.reportgrid{grid-template-columns:1fr}header{padding:18px}}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="brand">Code Vedic <span style="font-weight:500">| Agency CRM</span></div><div class="tagline">Innovative Solutions for a Smarter Tomorrow.</div></div>
+  <div class="status" id="connectionStatus">Google Sheets: Not connected</div>
+</header>
+<main>
+  <div class="notice"><strong>Setup required:</strong> Add your Google Apps Script Web App URL in the <code>API_URL</code> variable near the bottom of this file. The setup guide is included in the ZIP.</div>
+  <nav class="tabs">
+    <button class="tab active" data-tab="dashboard">Dashboard</button>
+    <button class="tab" data-tab="leads">Leads & Clients</button>
+    <button class="tab" data-tab="reports">Reports</button>
+  </nav>
+  <section id="dashboard">
+    <div class="metrics">
+      <div class="metric"><small>Total leads / clients</small><strong id="totalMetric">0</strong></div>
+      <div class="metric"><small>New leads</small><strong id="newMetric">0</strong></div>
+      <div class="metric"><small>Won clients</small><strong id="wonMetric">0</strong></div>
+      <div class="metric"><small>Potential value</small><strong id="valueMetric">₹0</strong></div>
+    </div>
+    <div class="panel"><h2>Recent enquiries</h2><div id="recentTable" class="tablewrap"><div class="empty">Connect Google Sheets to load CRM records.</div></div></div>
+  </section>
+
+  <section id="leads" class="hidden">
+    <div class="layout">
+      <div class="panel">
+        <h2 id="formTitle">Add a lead / client</h2>
+        <form id="leadForm">
+          <input type="hidden" id="recordId">
+          <div class="formgrid">
+            <div class="field"><label for="name">Contact / client name *</label><input id="name" required placeholder="e.g. Rahul Kumar"></div>
+            <div class="field"><label for="company">Company / business</label><input id="company" placeholder="Business name"></div>
+            <div class="field"><label for="phone">Phone / WhatsApp *</label><input id="phone" required inputmode="tel" placeholder="+91..."></div>
+            <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="name@example.com"></div>
+            <div class="field"><label for="service">Service required *</label><select id="service" required><option value="">Select service</option><option>Social Media Management</option><option>Social Media Marketing</option><option>Web Design & Development</option><option>SEO</option><option>SMO</option><option>Digital Marketing</option><option>IT / Cyber Security Training</option><option>Computer Training</option><option>Other</option></select></div>
+            <div class="field"><label for="source">Lead source</label><select id="source"><option>WhatsApp</option><option>Phone Call</option><option>Instagram</option><option>Facebook</option><option>Website</option><option>Referral</option><option>Walk-in</option><option>Other</option></select></div>
+            <div class="field"><label for="status">Status</label><select id="status"><option>New</option><option>Contacted</option><option>Follow-up</option><option>Qualified</option><option>Proposal Sent</option><option>Won</option><option>Lost</option></select></div>
+            <div class="field"><label for="followup">Next follow-up date</label><input id="followup" type="date"></div>
+            <div class="field"><label for="value">Expected value (₹)</label><input id="value" type="number" min="0" step="1" placeholder="0"></div>
+            <div class="field"><label for="owner">Assigned to</label><input id="owner" placeholder="Team member"></div>
+            <div class="field full"><label for="notes">Notes / next action</label><textarea id="notes" placeholder="Requirements, discussion notes, next action..."></textarea></div>
+          </div>
+          <div class="form-actions"><button class="btn" id="saveBtn" type="submit">Save to Google Sheets</button><button class="btn secondary" type="button" id="resetBtn">Clear form</button></div>
+          <div id="formMessage" class="message"></div>
+        </form>
+      </div>
+      <div class="panel">
+        <h2>All leads & clients</h2>
+        <div class="toolbar"><input id="searchBox" placeholder="Search name, company, phone..."><select id="statusFilter"><option value="">All statuses</option><option>New</option><option>Contacted</option><option>Follow-up</option><option>Qualified</option><option>Proposal Sent</option><option>Won</option><option>Lost</option></select><button class="btn secondary" id="refreshBtn" type="button">Refresh</button></div>
+        <div id="allTable" class="tablewrap"><div class="empty">No records loaded yet.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reports" class="hidden">
+    <div class="panel"><h2>CRM reports</h2><p class="muted">Reports are calculated from records currently loaded from your Google Sheet.</p>
+      <div class="reportgrid">
+        <div class="reportbox"><small>Conversion rate</small><strong id="conversionReport">0%</strong><span class="muted">Won / all records</span></div>
+        <div class="reportbox"><small>Open pipeline value</small><strong id="pipelineReport">₹0</strong><span class="muted">Excludes Won and Lost</span></div>
+        <div class="reportbox"><small>Follow-ups due / overdue</small><strong id="dueReport">0</strong><span class="muted">Today or earlier</span></div>
+      </div>
+      <h2 style="margin-top:22px">Service-wise enquiries</h2><div id="serviceReport"></div>
+      <h2 style="margin-top:22px">Status summary</h2><div id="statusReport"></div>
+      <div class="form-actions"><button class="btn secondary" id="exportBtn" type="button">Export CSV</button></div>
+    </div>
+  </section>
+</main>
+<script>
+/* Paste the deployed Google Apps Script Web App URL here. Keep the URL inside quotes. */
+const API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+let records = [];
+const $ = id => document.getElementById(id);
+const fields = ["name","company","phone","email","service","source","status","followup","value","owner","notes"];
+const money = n => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(Number(n)||0);
+const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function showMessage(msg,type="ok"){ $("formMessage").textContent=msg; $("formMessage").className="message "+type; }
+function connected(){return API_URL.startsWith("https://script.google.com/") && !API_URL.includes("PASTE_YOUR");}
+function setConnection(ok){$("connectionStatus").textContent=ok?"Google Sheets: Connected":"Google Sheets: Not connected";$("connectionStatus").style.background=ok?"#15803d55":"#ffffff20";}
+async function api(action,payload={}) {
+  if(!connected()) throw new Error("Add your deployed Apps Script Web App URL to API_URL in index.html first.");
+  const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
+  const data=await res.json();
+  if(!data.success) throw new Error(data.error||"Request failed");
+  return data;
+}
+async function loadRecords(){
+  try{const data=await api("list");records=data.records||[];setConnection(true);renderAll();}
+  catch(e){setConnection(false);$("recentTable").innerHTML='<div class="empty">'+esc(e.message)+'</div>';$("allTable").innerHTML='<div class="empty">'+esc(e.message)+'</div>';renderMetrics();}
+}
+function renderMetrics(){
+ const won=records.filter(r=>r.status==="Won").length;
+ const open=records.filter(r=>!["Won","Lost"].includes(r.status)).reduce((s,r)=>s+(Number(r.value)||0),0);
+ $("totalMetric").textContent=records.length;$("newMetric").textContent=records.filter(r=>r.status==="New").length;$("wonMetric").textContent=won;$("valueMetric").textContent=money(open);
+ $("conversionReport").textContent=(records.length?Math.round(won/records.length*100):0)+"%";$("pipelineReport").textContent=money(open);
+ const today=new Date();today.setHours(0,0,0,0);
+ $("dueReport").textContent=records.filter(r=>r.followup&&new Date(r.followup+"T00:00:00")<=today&&!["Won","Lost"].includes(r.status)).length;
+ const counts={};records.forEach(r=>counts[r.service||"Unspecified"]=(counts[r.service||"Unspecified"]||0)+1);
+ $("serviceReport").innerHTML=Object.keys(counts).length?Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<p>${esc(k)} <strong style="float:right">${v}</strong></p>`).join(""):'<p class="muted">No data yet.</p>';
+ const statuses={};records.forEach(r=>statuses[r.status||"Unspecified"]=(statuses[r.status||"Unspecified"]||0)+1);
+ $("statusReport").innerHTML=Object.keys(statuses).length?Object.entries(statuses).map(([k,v])=>`<p><span class="pill ${esc(k)}">${esc(k)}</span> <strong style="float:right">${v}</strong></p>`).join(""):'<p class="muted">No data yet.</p>';
+}
+function tableHTML(rows,withActions=false){
+ if(!rows.length)return '<div class="empty">No matching records.</div>';
+ return `<table><thead><tr><th>Name / Company</th><th>Service</th><th>Phone</th><th>Status</th><th>Follow-up</th><th>Value</th>${withActions?'<th>Actions</th>':''}</tr></thead><tbody>`+
+ rows.map(r=>`<tr><td><strong>${esc(r.name)}</strong><br><span class="muted">${esc(r.company||"")}</span></td><td>${esc(r.service)}</td><td>${esc(r.phone)}</td><td><span class="pill ${esc(r.status)}">${esc(r.status)}</span></td><td>${esc(r.followup||"—")}</td><td>${money(r.value)}</td>${withActions?`<td><button class="btn secondary" style="padding:6px 9px" onclick="editRecord('${esc(r.id)}')">Edit</button> <button class="btn secondary" style="padding:6px 9px" onclick="deleteRecord('${esc(r.id)}')">Delete</button></td>`:""}</tr>`).join("")+"</tbody></table>";
+}
+function renderAll(){
+ renderMetrics();
+ $("recentTable").innerHTML=tableHTML([...records].slice(-5).reverse());
+ const q=$("searchBox").value.toLowerCase(),st=$("statusFilter").value;
+ const filtered=records.filter(r=>(!st||r.status===st)&&[r.name,r.company,r.phone,r.email,r.service].join(" ").toLowerCase().includes(q)).reverse();
+ $("allTable").innerHTML=tableHTML(filtered,true);
+}
+function clearForm(){ $("leadForm").reset();$("recordId").value="";$("formTitle").textContent="Add a lead / client";$("saveBtn").textContent="Save to Google Sheets";showMessage("");}
+$("leadForm").addEventListener("submit",async e=>{
+ e.preventDefault();const id=$("recordId").value;const record={};fields.forEach(k=>record[k]=$(k).value.trim());record.value=Number(record.value)||0;
+ $("saveBtn").disabled=true;$("saveBtn").textContent="Saving...";
+ try{await api(id?"update":"create",{record:{...record,id}});showMessage(id?"Record updated successfully.":"Lead saved successfully.");clearForm();await loadRecords();}
+ catch(err){showMessage(err.message,"error");}
+ finally{$("saveBtn").disabled=false;$("saveBtn").textContent="Save to Google Sheets";}
+});
+window.editRecord=id=>{const r=records.find(x=>String(x.id)===String(id));if(!r)return;fields.forEach(k=>$(k).value=r[k]??"");$("recordId").value=r.id;$("formTitle").textContent="Edit lead / client";$("saveBtn").textContent="Update record";document.querySelector('[data-tab="leads"]').click();window.scrollTo({top:0,behavior:"smooth"});};
+window.deleteRecord=async id=>{if(!confirm("Delete this CRM record from Google Sheets?"))return;try{await api("delete",{id});await loadRecords();}catch(e){alert(e.message);}};
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));["dashboard","leads","reports"].forEach(id=>$(id).classList.toggle("hidden",id!==b.dataset.tab));if(b.dataset.tab==="reports")renderMetrics();}));
+$("resetBtn").addEventListener("click",clearForm);$("refreshBtn").addEventListener("click",loadRecords);$("searchBox").addEventListener("input",renderAll);$("statusFilter").addEventListener("change",renderAll);
+$("exportBtn").addEventListener("click",()=>{const cols=["id",...fields,"createdAt","updatedAt"];const csv=[cols.join(","),...records.map(r=>cols.map(c=>'"'+String(r[c]??"").replace(/"/g,'""')+'"').join(","))].join("\r\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="codevedic-crm-report.csv";a.click();URL.revokeObjectURL(a.href);});
+loadRecords();
+</script>
+</body>
+</html>
