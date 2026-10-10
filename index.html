@@ -21,7 +21,7 @@ main{max-width:1200px;margin:24px auto;padding:0 18px}.tabs{display:flex;gap:8px
   <div class="status" id="connectionStatus">Google Sheets: Not connected</div>
 </header>
 <main>
-  <div class="notice"><strong>Setup required:</strong> Add your Google Apps Script Web App URL in the <code>API_URL</code> variable near the bottom of this file. The setup guide is included in the ZIP.</div>
+  <div class="notice"><strong>Setup required:</strong> Add your Google Apps Script Web App URL in the <code>https://script.google.com/macros/s/AKfycbydeaCPEtJp92ts47BrcLAnb2xbMsAYFjCCOfg18pEO4_hdMbIV-xWnlY971Lzm-WY3MQ/execL</code> variable near the bottom of this file. The setup guide is included in the ZIP.</div>
   <nav class="tabs">
     <button class="tab active" data-tab="dashboard">Dashboard</button>
     <button class="tab" data-tab="leads">Leads & Clients</button>
@@ -83,14 +83,14 @@ main{max-width:1200px;margin:24px auto;padding:0 18px}.tabs{display:flex;gap:8px
 </main>
 <script>
 /* Paste the deployed Google Apps Script Web App URL here. Keep the URL inside quotes. */
-const API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const API_URL = "https://script.google.com/macros/s/AKfycbydeaCPEtJp92ts47BrcLAnb2xbMsAYFjCCOfg18pEO4_hdMbIV-xWnlY971Lzm-WY3MQ/exec";
 let records = [];
 const $ = id => document.getElementById(id);
 const fields = ["name","company","phone","email","service","source","status","followup","value","owner","notes"];
 const money = n => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(Number(n)||0);
 const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function showMessage(msg,type="ok"){ $("formMessage").textContent=msg; $("formMessage").className="message "+type; }
-function connected(){return API_URL.startsWith("https://script.google.com/") && !API_URL.includes("PASTE_YOUR");}
+function connected(){return API_URL.startsWith("https://script.google.com/") && !API_URL.includes("https://script.google.com/macros/s/AKfycbydeaCPEtJp92ts47BrcLAnb2xbMsAYFjCCOfg18pEO4_hdMbIV-xWnlY971Lzm-WY3MQ/exec");}
 function setConnection(ok){$("connectionStatus").textContent=ok?"Google Sheets: Connected":"Google Sheets: Not connected";$("connectionStatus").style.background=ok?"#15803d55":"#ffffff20";}
 async function api(action,payload={}) {
   if(!connected()) throw new Error("Add your deployed Apps Script Web App URL to API_URL in index.html first.");
